@@ -12,17 +12,23 @@ personas =[]
 for directory in os.listdir('./imagenes/'):
     personas.append(directory)
 
-today = datetime.now()
-fecha = today.strftime("%Y-%m-%d")
-hora = today.strftime("%H:%M:%S")
+
+def getTime():
+    today = datetime.now()
+    fecha = today.strftime("%Y-%m-%d")
+    hora = today.strftime("%H:%M:%S")
+    return fecha, hora
+
 
 def saveToJson(persona):
+    fecha, hora = getTime()
     dictionary = {
     "nombre": persona,
     "fecha": fecha,
     "hora": hora,
     }
     return dictionary
+ 
 
 transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
 model_ft = torch.load("./entrenamiento/modelo_caras.pt")
@@ -75,9 +81,12 @@ while True:
 
     cv2.imshow('Video', frame)
     if cv2.waitKey(1) & 0xFF == ord('s'):
-        diccionario = saveToJson(str(personas[predict.argmax().item()]))
-        with open("./verificacion/sample.json", "a+") as outfile:
-            json.dump(diccionario, outfile)
+        dictionary = saveToJson(str(personas[predict.argmax().item()]))
+        input_file = open('./verificacion/sample.json')
+        json_array = json.load(input_file)
+        json_array.append(dictionary)   
+        with open("./verificacion/sample.json", "w") as outfile:
+            json.dump(json_array, outfile)
         break
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break

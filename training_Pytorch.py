@@ -14,8 +14,8 @@ capas_ocultas = [1024, 128, 64]
 capa_salida = len(os.listdir('./imagenes'))
 
 
-modelo = nn.Sequential(nn.Linear(capa_entrada, capas_ocultas[0]), nn.ReLU(),
-                       nn.Linear(capas_ocultas[0], capas_ocultas[1]), nn.ReLU(),
+modelo = nn.Sequential(nn.Linear(capa_entrada, capas_ocultas[0]), nn.SELU(),
+                       nn.Linear(capas_ocultas[0], capas_ocultas[1]), nn.SELU(),
                        nn.Linear(capas_ocultas[1], capa_salida), nn.LogSoftmax(dim=1))
 
 j = nn.CrossEntropyLoss()
@@ -38,3 +38,5 @@ for e in range(epochs):
 print("\nTiempo de entrenamiento (en minutes) =", (time() - tiempo) / 60)
 
 torch.save(modelo, './entrenamiento/modelo_caras.pt')
+
+print(modelo)
